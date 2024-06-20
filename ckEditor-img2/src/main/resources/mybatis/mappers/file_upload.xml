@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+           "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.or.kosa.dao.FileUploadDAO">
+
+	<insert id="insert">
+		<selectKey order="AFTER" keyProperty="file_id" resultType="int">
+			select LAST_INSERT_ID() file_id
+		</selectKey>
+		
+		insert into file_upload (
+			 token
+			,original_filename
+			,real_filename
+			,content_type
+			,size
+		) values (
+			 #{token}
+			,#{original_filename}
+			,#{real_filename}
+			,#{content_type}
+			,#{size}
+		) 
+	</insert>
+
+
+	<select id="findById" resultType="FileUploadVO">
+		SELECT  
+			 file_id 
+			 token
+			,original_filename
+			,real_filename
+			,content_type
+			,size
+		FROM  file_upload 
+		where file_id = #{file_id}
+	</select>
+	
+	
+	<select id="getFileUploadList" resultType="FileUploadVO">
+		select
+			*
+		from file_upload  
+		where token = #{token} 
+	</select>
+	
+	<delete id="deleteTemplateFile">
+		delete from file_upload  
+		where file_id in  
+		<foreach collection="list" item="item" open="(" separator="," close=")" >
+			#{item.file_id}
+		</foreach> 
+	</delete>
+
+
+	
+	<select id="deleteFileList" resultType="FileUploadVO">
+		select
+			*
+		from file_upload  
+		where token in 
+		<foreach collection="list" item="item" open="(" separator="," close=")" >
+			#{item.token}
+		</foreach> 
+	</select>
+
+
+	<delete id="deleteTokenList">
+		delete from file_upload  
+		where token in 
+		<foreach collection="list" item="item" open="(" separator="," close=")" >
+			#{item.token}
+		</foreach> 
+	</delete>
+
+
+</mapper>
